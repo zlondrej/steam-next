@@ -1,6 +1,6 @@
-[![PyPI](https://img.shields.io/pypi/v/steam-next.svg?label=pypi)](https://pypi.python.org/pypi/steam-next)
-[![Python Versions](https://img.shields.io/pypi/pyversions/steam-next.svg?label=%20&logo=python&logoColor=white)](https://pypi.python.org/pypi/steam-next)
-[![License](https://img.shields.io/pypi/l/steam-next.svg?style=flat&label=license)](https://pypi.python.org/pypi/steam-next)
+[![PyPI](https://img.shields.io/pypi/v/steam-next)](https://pypi.python.org/pypi/steam-next)
+[![Python Versions](https://img.shields.io/pypi/pyversions/steam-next)](https://pypi.python.org/pypi/steam-next)
+[![License](https://img.shields.io/github/license/fabieu/steam-next)](https://github.com/fabieu/steam-next/blob/master/LICENSE)
 [![Docs](https://readthedocs.org/projects/steam-next/badge/?version=latest)](https://steam-next.readthedocs.io/latest/)
 
 A python module for interacting with various parts of [Steam](https://store.steampowered.com/) supporting python `3.9+`.
