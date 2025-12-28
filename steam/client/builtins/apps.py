@@ -1,6 +1,7 @@
 from binascii import hexlify
 
 import vdf
+
 from steam.core.msg import MsgProto
 from steam.enums import EResult
 from steam.enums.emsg import EMsg
@@ -177,14 +178,16 @@ class Apps(object):
 
         return data
 
-    def get_changes_since(self, change_number, app_changes=True, package_changes=False):
+    def get_changes_since(self, change_number, app_changes=True, package_changes=False, timeout=10):
         """Get changes since a change number
 
         :param change_number: change number to use as stating point
         :type change_number: :class:`int`
-        :param app_changes: whether to inclued app changes
+        :param app_changes: whether to include app changes
         :type app_changes: :class:`bool`
-        :param package_changes: whether to inclued package changes
+        :param package_changes: whether to include package changes
+        :param timeout: timeout in seconds
+        :type timeout: :class:`int`
         :type package_changes: :class:`bool`
         :return: `CMsgClientPICSChangesSinceResponse <https://github.com/fabieu/steam-next/blob/39627fe883feeed2206016bacd92cf0e4580ead6/protobufs/steammessages_clientserver.proto#L1171-L1191>`_
         :rtype: proto message instance, or :class:`None` on timeout
@@ -195,7 +198,7 @@ class Apps(object):
                                           'send_app_info_changes': app_changes,
                                           'send_package_info_changes': package_changes,
                                       },
-                                      timeout=10
+                                      timeout=timeout
                                       )
 
     def get_app_ticket(self, app_id):
