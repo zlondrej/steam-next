@@ -1,6 +1,7 @@
-import mock
 import socket
 import unittest
+
+import mock
 
 from steam.game_servers import a2s_rules
 

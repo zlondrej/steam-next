@@ -1,11 +1,13 @@
 import unittest
+
 import mock
+import requests
 import vcr
 
-import requests
 from steam import steamid
-from steam.steamid import SteamID, ETypeChar
 from steam.enums import EType, EUniverse, EInstanceFlag
+from steam.steamid import SteamID
+
 
 def create_steam64(accountid, etype, euniverse, instance):
     return (euniverse << 56) | (etype << 52) | (instance << 32) | accountid
@@ -34,9 +36,9 @@ class SteamID_initialization(unittest.TestCase):
 
     def test_arg_toomany_invalid(self):
         with self.assertRaises(TypeError):
-            SteamID(1,2,3,4,5)
+            SteamID(1, 2, 3, 4, 5)
         with self.assertRaises(TypeError):
-            SteamID(1,2,3,4,5,6)
+            SteamID(1, 2, 3, 4, 5, 6)
 
     def test_args_only(self):
         self.compare(SteamID(1, 2),
@@ -289,35 +291,39 @@ class SteamID_properties(unittest.TestCase):
                          )
 
     def test_as_invite_code(self):
-        self.assertEqual(SteamID(0         , EType.Individual, EUniverse.Public, instance=1).as_invite_code, None)
-        self.assertEqual(SteamID(1         , EType.Invalid   , EUniverse.Public, instance=1).as_invite_code, None)
-        self.assertEqual(SteamID(1         , EType.Clan      , EUniverse.Public, instance=1).as_invite_code, None)
-        self.assertEqual(SteamID(1         , EType.Individual, EUniverse.Beta  , instance=1).as_invite_code, 'c')
-        self.assertEqual(SteamID(1         , EType.Individual, EUniverse.Public, instance=1).as_invite_code, 'c')
-        self.assertEqual(SteamID(123456    , EType.Individual, EUniverse.Public, instance=1).as_invite_code, 'cv-dgb')
-        self.assertEqual(SteamID(4294967295, EType.Individual, EUniverse.Public, instance=1).as_invite_code, 'wwww-wwww')
+        self.assertEqual(SteamID(0, EType.Individual, EUniverse.Public, instance=1).as_invite_code, None)
+        self.assertEqual(SteamID(1, EType.Invalid, EUniverse.Public, instance=1).as_invite_code, None)
+        self.assertEqual(SteamID(1, EType.Clan, EUniverse.Public, instance=1).as_invite_code, None)
+        self.assertEqual(SteamID(1, EType.Individual, EUniverse.Beta, instance=1).as_invite_code, 'c')
+        self.assertEqual(SteamID(1, EType.Individual, EUniverse.Public, instance=1).as_invite_code, 'c')
+        self.assertEqual(SteamID(123456, EType.Individual, EUniverse.Public, instance=1).as_invite_code, 'cv-dgb')
+        self.assertEqual(SteamID(4294967295, EType.Individual, EUniverse.Public, instance=1).as_invite_code,
+                         'wwww-wwww')
 
     def test_as_csgo_friend_code(self):
-        self.assertEqual(SteamID(0         , EType.Individual, EUniverse.Public, instance=1).as_csgo_friend_code, None)
-        self.assertEqual(SteamID(1         , EType.Invalid   , EUniverse.Public, instance=1).as_csgo_friend_code, None)
-        self.assertEqual(SteamID(1         , EType.Clan      , EUniverse.Public, instance=1).as_csgo_friend_code, None)
-        self.assertEqual(SteamID(1         , EType.Individual, EUniverse.Beta  , instance=1).as_csgo_friend_code, 'AJJJS-ABAA')
-        self.assertEqual(SteamID(1         , EType.Individual, EUniverse.Public, instance=1).as_csgo_friend_code, 'AJJJS-ABAA')
-        self.assertEqual(SteamID(123456    , EType.Individual, EUniverse.Public, instance=1).as_csgo_friend_code, 'ABNBT-GBDC')
-        self.assertEqual(SteamID(4294967295, EType.Individual, EUniverse.Public, instance=1).as_csgo_friend_code, 'S9ZZR-999P')
+        self.assertEqual(SteamID(0, EType.Individual, EUniverse.Public, instance=1).as_csgo_friend_code, None)
+        self.assertEqual(SteamID(1, EType.Invalid, EUniverse.Public, instance=1).as_csgo_friend_code, None)
+        self.assertEqual(SteamID(1, EType.Clan, EUniverse.Public, instance=1).as_csgo_friend_code, None)
+        self.assertEqual(SteamID(1, EType.Individual, EUniverse.Beta, instance=1).as_csgo_friend_code, 'AJJJS-ABAA')
+        self.assertEqual(SteamID(1, EType.Individual, EUniverse.Public, instance=1).as_csgo_friend_code, 'AJJJS-ABAA')
+        self.assertEqual(SteamID(123456, EType.Individual, EUniverse.Public, instance=1).as_csgo_friend_code,
+                         'ABNBT-GBDC')
+        self.assertEqual(SteamID(4294967295, EType.Individual, EUniverse.Public, instance=1).as_csgo_friend_code,
+                         'S9ZZR-999P')
 
     def test_as_invite_url(self):
-        self.assertEqual(SteamID(0     , EType.Individual, EUniverse.Public, instance=1).invite_url, None)
-        self.assertEqual(SteamID(123456, EType.Individual, EUniverse.Public, instance=1).invite_url, 'https://s.team/p/cv-dgb')
-        self.assertEqual(SteamID(123456, EType.Individual, EUniverse.Beta  , instance=1).invite_url, 'https://s.team/p/cv-dgb')
-        self.assertEqual(SteamID(123456, EType.Invalid   , EUniverse.Public, instance=1).invite_url, None)
-        self.assertEqual(SteamID(123456, EType.Clan      , EUniverse.Public, instance=1).invite_url, None)
+        self.assertEqual(SteamID(0, EType.Individual, EUniverse.Public, instance=1).invite_url, None)
+        self.assertEqual(SteamID(123456, EType.Individual, EUniverse.Public, instance=1).invite_url,
+                         'https://s.team/p/cv-dgb')
+        self.assertEqual(SteamID(123456, EType.Individual, EUniverse.Beta, instance=1).invite_url,
+                         'https://s.team/p/cv-dgb')
+        self.assertEqual(SteamID(123456, EType.Invalid, EUniverse.Public, instance=1).invite_url, None)
+        self.assertEqual(SteamID(123456, EType.Clan, EUniverse.Public, instance=1).invite_url, None)
 
 
 class steamid_functions(unittest.TestCase):
     @mock.patch('steam.steamid.steam64_from_url')
     def test_from_url(self, s64_from_url):
-
         s64_from_url.return_value = None
         self.assertIsNone(steamid.from_url(None))
 
@@ -342,6 +348,7 @@ class steamid_functions(unittest.TestCase):
             r.headers.pop('Cookie', None)
             r.headers.pop('Date', None)
             return r
+
         def scrub_resp(r):
             r['headers'].pop('Set-Cookie', None)
             r['headers'].pop('Date', None)
@@ -350,8 +357,8 @@ class steamid_functions(unittest.TestCase):
         with vcr.use_cassette('vcr/steamid_community_urls.yaml',
                               mode='once',
                               serializer='yaml',
+                              decode_compressed_response=True,
                               filter_query_parameters=['nocache'],
-                              decode_compressed_response=False,
                               before_record_request=scrub_req,
                               before_record_response=scrub_resp,
                               ):
