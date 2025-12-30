@@ -8,11 +8,11 @@ from steam.enums.emsg import EMsg
 from steam.utils.web import make_requests_session, generate_session_id
 
 
-class Web(object):
+class Web:
     _web_session = None
 
     def __init__(self, *args, **kwargs):
-        super(Web, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.on(self.EVENT_DISCONNECTED, self.__handle_disconnect)
 

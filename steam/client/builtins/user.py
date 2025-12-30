@@ -7,7 +7,7 @@ from steam.enums.emsg import EMsg
 from steam.utils.proto import proto_fill_from_dict
 
 
-class User(object):
+class User:
     EVENT_CHAT_MESSAGE = 'chat_message'
     """On new private chat message
 
@@ -22,7 +22,7 @@ class User(object):
     current_games_played = []  #: :class:`list` of app ids currently being played
 
     def __init__(self, *args, **kwargs):
-        super(User, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self._user_cache = WeakValueDictionary()
 

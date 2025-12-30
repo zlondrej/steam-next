@@ -11,7 +11,7 @@ from Cryptodome.Hash import MD5, SHA1, HMAC
 from Cryptodome.PublicKey.RSA import import_key as rsa_import_key, construct as rsa_construct
 
 
-class UniverseKey(object):
+class UniverseKey:
     """Public keys for Universes"""
 
     Public = rsa_import_key(b64decode("""

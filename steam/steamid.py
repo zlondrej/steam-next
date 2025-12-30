@@ -3,12 +3,11 @@ import re
 import struct
 
 import requests
+
 from steam.core.crypto import md5_hash
 from steam.enums import EType, EUniverse, EInstanceFlag
 from steam.enums.base import SteamIntEnum
 from steam.utils.web import make_requests_session
-
-intBase = int
 
 
 class ETypeChar(SteamIntEnum):
@@ -39,7 +38,7 @@ _icode_map_inv = dict(zip(_icode_custom, _icode_hex))
 _csgofrcode_chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 
 
-class SteamID(intBase):
+class SteamID(int):
     """
     Object for converting steamID to its' various representations
 
@@ -60,7 +59,7 @@ class SteamID(intBase):
 
     def __new__(cls, *args, **kwargs):
         steam64 = make_steam64(*args, **kwargs)
-        return super(SteamID, cls).__new__(cls, steam64)
+        return super().__new__(cls, steam64)
 
     def __init__(self, *args, **kwargs):
         pass

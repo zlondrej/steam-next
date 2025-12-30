@@ -1,7 +1,7 @@
 from struct import unpack_from as _unpack_from, calcsize as _calcsize
 
 
-class StructReader(object):
+class StructReader:
     def __init__(self, data):
         """Simplifies parsing of struct data from bytes
 

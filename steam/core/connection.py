@@ -10,7 +10,7 @@ from gevent.select import select as gselect
 logger = logging.getLogger("Connection")
 
 
-class Connection(object):
+class Connection:
     MAGIC = b'VT01'
     FMT = '<I4s'
     FMT_SIZE = struct.calcsize(FMT)

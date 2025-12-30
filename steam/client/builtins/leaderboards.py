@@ -4,13 +4,13 @@ Reading the leaderboards with :class:`SteamLeaderboard` is as easy as iterating 
 from steam.core.msg import MsgProto
 from steam.enums import EResult, ELeaderboardDataRequest, ELeaderboardSortMethod, ELeaderboardDisplayType
 from steam.enums.emsg import EMsg
-from steam.utils import _range, chunks
+from steam.utils import chunks
 from steam.utils.throttle import ConstantRateLimit
 
 
-class Leaderboards(object):
+class Leaderboards:
     def __init__(self, *args, **kwargs):
-        super(Leaderboards, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def get_leaderboard(self, app_id, name):
         """.. versionadded:: 0.8.2
@@ -41,7 +41,7 @@ class Leaderboards(object):
         return SteamLeaderboard(self, app_id, name, resp)
 
 
-class SteamLeaderboard(object):
+class SteamLeaderboard:
     """.. versionadded:: 0.8.2
 
     Steam leaderboard object.
@@ -157,7 +157,7 @@ class SteamLeaderboard(object):
         entries = self.get_entries(start + 1, stop)
 
         if isinstance(x, slice):
-            return [entries[i] for i in _range(0, len(entries), step)]
+            return [entries[i] for i in range(0, len(entries), step)]
         else:
             return entries[0]
 

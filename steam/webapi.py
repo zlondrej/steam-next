@@ -31,11 +31,12 @@ All globals params (``key``, ``https``, ``format``, ``raw``) can be specified on
     }
 """
 import json as _json
+import xml.etree.ElementTree as ElementTree
 
 from steam.utils.web import make_requests_session as _make_session
 
 
-class APIHost(object):
+class APIHost:
     """Enum of currently available API hosts."""
     Public = 'api.steampowered.com'
     """ available over HTTP (port 80) and HTTPS (port 443)"""
@@ -59,7 +60,7 @@ DEFAULT_PARAMS = {
 }
 
 
-class WebAPI(object):
+class WebAPI:
     """Steam WebAPI wrapper
 
     .. note::
@@ -180,7 +181,7 @@ class WebAPI(object):
         return doc
 
 
-class WebAPIInterface(object):
+class WebAPIInterface:
     """
     Steam Web API Interface
     """
@@ -255,7 +256,7 @@ class WebAPIInterface(object):
         return doc
 
 
-class WebAPIMethod(object):
+class WebAPIMethod:
     """
     Steam Web API Interface Method
     """
@@ -440,8 +441,7 @@ def webapi_request(url, method='GET', caller=None, session=None, params=None):
     elif onetime['format'] == 'json':
         return resp.json()
     elif onetime['format'] == 'xml':
-        from lxml import etree as _etree
-        return _etree.fromstring(resp.content)
+        return ElementTree.fromstring(resp.content)
     elif onetime['format'] == 'vdf':
         import vdf as _vdf
         return _vdf.loads(resp.text)

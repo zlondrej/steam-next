@@ -144,7 +144,7 @@ def _u(data):
 
 class StructReader(_StructReader):
     def read_cstring(self, binary=False):
-        raw = super(StructReader, self).read_cstring()
+        raw = super().read_cstring()
         if binary:
             return raw
         return _u(raw)

@@ -11,7 +11,7 @@ from steam.utils.proto import proto_to_dict
 LOG = logging.getLogger("Steam Worker")
 
 
-class SteamWorker(object):
+class SteamWorker:
     def __init__(self):
         self.logged_on_once = False
 

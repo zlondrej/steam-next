@@ -2,6 +2,7 @@
 import struct
 
 import vdf
+
 from steam.enums import EResult, EUniverse
 from steam.enums.emsg import EMsg
 from steam.utils.binary import StructReader
@@ -124,7 +125,7 @@ class ClientLogOnResponse(StructMessage):
 
 
 class ClientVACBanStatus(StructMessage):
-    class VACBanRange(object):
+    class VACBanRange:
         start = 0
         end = 0
 
@@ -254,7 +255,7 @@ class ClientChatMemberInfo(StructMessage):
 
 
 class ClientMarketingMessageUpdate2(StructMessage):
-    class MarketingMessage(object):
+    class MarketingMessage:
         id = 0
         url = ''
         flags = 0

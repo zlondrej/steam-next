@@ -14,7 +14,7 @@ from steam.protobufs.content_manifest_pb2 import (ContentManifestMetadata,
 from steam.utils.binary import StructReader
 
 
-class DepotFile(object):
+class DepotFile:
     def __init__(self, manifest, file_mapping):
         """Depot file
 
@@ -133,7 +133,7 @@ class DepotFile(object):
         return self.flags & EDepotFileFlag.Executable > 0
 
 
-class DepotManifest(object):
+class DepotManifest:
     DepotFileClass = DepotFile
     PROTOBUF_PAYLOAD_MAGIC = 0x71F617D0
     PROTOBUF_METADATA_MAGIC = 0x1F4812BE

@@ -60,13 +60,11 @@ from getpass import getpass
 from time import time
 
 import requests
+
 from steam.core.crypto import rsa_publickey, pkcs1v15_encrypt
 from steam.enums.proto import EAuthSessionGuardType
 from steam.steamid import SteamID
 from steam.utils.web import generate_session_id
-
-intBase = int
-_cli_input = input
 
 API_HEADERS = {
     'origin': 'https://steamcommunity.com',
@@ -80,7 +78,7 @@ SUPPORTED_AUTH_TYPES = [EAuthSessionGuardType.EmailCode, EAuthSessionGuardType.D
                         EAuthSessionGuardType.DeviceConfirmation]
 
 
-class WebAuth(object):
+class WebAuth:
     """New WEB Auth class.
 
     This class works with Steam API:
@@ -181,8 +179,8 @@ class WebAuth(object):
         """
         r = self._get_rsa_key()
 
-        mod = intBase(r['response']['publickey_mod'], 16)
-        exp = intBase(r['response']['publickey_exp'], 16)
+        mod = int(r['response']['publickey_mod'], 16)
+        exp = int(r['response']['publickey_exp'], 16)
 
         pub_key = rsa_publickey(mod, exp)
         encrypted = pkcs1v15_encrypt(pub_key, self.password.encode('ascii'))

@@ -31,8 +31,6 @@ from steam.steamid import SteamID
 from steam.utils import ip4_from_int, ip4_to_int
 from steam.utils.proto import proto_fill_from_dict
 
-_cli_input = input
-
 
 class SteamClient(CMClient, BuiltinBase):
     EVENT_LOGGED_ON = 'logged_on'
@@ -55,7 +53,7 @@ class SteamClient(CMClient, BuiltinBase):
     def __init__(self):
         CMClient.__init__(self)
 
-        # register listners
+        # register listeners
         self.on(self.EVENT_DISCONNECTED, self._handle_disconnect)
         self.on(self.EVENT_RECONNECT, self._handle_disconnect)
         self.on(EMsg.ClientNewLoginKey, self._handle_login_key)
@@ -638,7 +636,7 @@ class SteamClient(CMClient, BuiltinBase):
             Out[5]: <EResult.OK: 1>
         """
         if not username:
-            username = _cli_input("Username: ")
+            username = input("Username: ")
         if not password:
             password = getpass()
 
@@ -660,17 +658,17 @@ class SteamClient(CMClient, BuiltinBase):
             elif result in (EResult.AccountLogonDenied, EResult.InvalidLoginAuthCode):
                 prompt = ("Enter email code: " if result == EResult.AccountLogonDenied else
                           "Incorrect code. Enter email code: ")
-                auth_code, two_factor_code = _cli_input(prompt), None
+                auth_code, two_factor_code = input(prompt), None
 
             elif result in (EResult.AccountLoginDeniedNeedTwoFactor, EResult.TwoFactorCodeMismatch):
                 prompt = ("Enter 2FA code: " if result == EResult.AccountLoginDeniedNeedTwoFactor else
                           "Incorrect code. Enter 2FA code: ")
-                auth_code, two_factor_code = None, _cli_input(prompt)
+                auth_code, two_factor_code = None, input(prompt)
 
             elif result in (EResult.TryAnotherCM, EResult.ServiceUnavailable):
                 if prompt_for_unavailable and result == EResult.ServiceUnavailable:
                     while True:
-                        answer = _cli_input("Steam is down. Keep retrying? [y/n]: ").lower()
+                        answer = input("Steam is down. Keep retrying? [y/n]: ").lower()
                         if answer in 'yn': break
 
                     prompt_for_unavailable = False

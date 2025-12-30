@@ -70,6 +70,7 @@ from binascii import hexlify
 from time import time
 
 import requests
+
 from steam import webapi
 from steam.core.crypto import hmac_sha1, sha1_hash
 from steam.enums import ETwoFactorTokenType
@@ -78,7 +79,7 @@ from steam.utils.proto import proto_to_dict
 from steam.webauth import MobileWebAuth
 
 
-class SteamAuthenticator(object):
+class SteamAuthenticator:
     """Add/Remove authenticator from an account. Generate 2FA and confirmation codes."""
     _finalize_attempts = 5
     backend = None  #: instance of :class:`.MobileWebAuth` or :class:`.SteamClient`

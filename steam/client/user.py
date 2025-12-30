@@ -2,13 +2,14 @@ from binascii import hexlify
 from datetime import datetime
 
 from gevent.event import Event
+
 from steam.core.msg import MsgProto
 from steam.enums import EFriendRelationship, EPersonaState, EChatEntryType
 from steam.enums.emsg import EMsg
 from steam.steamid import SteamID
 
 
-class SteamUser(object):
+class SteamUser:
     """
     A data model for a Steam user. Holds user persona state, and related actions
 

@@ -207,7 +207,7 @@ def get_content_servers_from_webapi(cell_id, num_servers=20):
     return servers
 
 
-class ContentServer(object):
+class ContentServer:
     https = False
     host = None
     vhost = None
@@ -444,7 +444,7 @@ class CDNDepotManifest(DepotManifest):
             mapping.chunks.sort(key=lambda x: x.offset, reverse=False)
 
 
-class CDNClient(object):
+class CDNClient:
     DepotManifestClass = CDNDepotManifest
     _LOG = logging.getLogger("CDNClient")
     servers = deque()  #: CS Server list

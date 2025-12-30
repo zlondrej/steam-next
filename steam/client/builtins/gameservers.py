@@ -43,14 +43,14 @@ from steam.utils import ip4_to_int, ip4_from_int, ip6_from_bytes
 from steam.utils.proto import proto_to_dict
 
 
-class GameServers(object):
+class GameServers:
     def __init__(self, *args, **kwargs):
-        super(GameServers, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.gameservers = SteamGameServers(self)  #: instance of :class:`SteamGameServers`
 
 
-class SteamGameServers(object):
+class SteamGameServers:
     def __init__(self, steam):
         self._s = steam
 

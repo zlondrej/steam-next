@@ -8,11 +8,11 @@ from steam.enums.emsg import EMsg
 from steam.utils.proto import proto_fill_from_dict
 
 
-class Apps(object):
+class Apps:
     licenses = None  #: :class:`dict` Accounts' package licenses
 
     def __init__(self, *args, **kwargs):
-        super(Apps, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.licenses = {}
         self.on(self.EVENT_DISCONNECTED, self.__handle_disconnect)
         self.on(EMsg.ClientLicenseList, self._handle_licenses)

@@ -30,9 +30,9 @@ from steam.enums.emsg import EMsg
 from steam.utils.proto import proto_fill_from_dict
 
 
-class UnifiedMessages(object):
+class UnifiedMessages:
     def __init__(self, *args, **kwargs):
-        super(UnifiedMessages, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def send_um(self, method_name, params=None):
         """Send service method request

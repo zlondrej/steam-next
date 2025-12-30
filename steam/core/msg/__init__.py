@@ -1,6 +1,7 @@
 import fnmatch
 
 from google.protobuf.message import Message as _ProtoMessageType
+
 from steam.core.msg.headers import MsgHdr, ExtendedMsgHdr, MsgHdrProtoBuf, GCMsgHdr, GCMsgHdrProto
 from steam.core.msg.structs import StructMessage as _StructMessage
 from steam.core.msg.structs import get_struct
@@ -79,7 +80,7 @@ def get_cmsg(emsg):
     return cmsg_lookup.get(cmsg_name, None)
 
 
-class Msg(object):
+class Msg:
     proto = False
     body = None  #: message instance
     payload = None  #: Will contain body payload, if we fail to find correct message class
@@ -169,7 +170,7 @@ class Msg(object):
         return '\n'.join(rows)
 
 
-class MsgProto(object):
+class MsgProto:
     proto = True
     body = None  #: protobuf message instance
     payload = None  #: Will contain body payload, if we fail to find correct proto message

@@ -11,6 +11,7 @@ from time import time
 import gevent
 import gevent.socket as socket
 from eventemitter import EventEmitter
+
 from steam.core import crypto
 from steam.core.connection import TCPConnection
 from steam.core.msg import Msg, MsgProto
@@ -404,7 +405,7 @@ class CMClient(EventEmitter):
         gevent.idle()
 
 
-class CMServerList(object):
+class CMServerList:
     """
     Managing object for CM servers
 
