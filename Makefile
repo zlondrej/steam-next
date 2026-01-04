@@ -25,13 +25,10 @@ help:
 
 init:
 	pipx install poetry
-	poetry install --with dev
+	poetry install --extras client --with dev
 
 test:
 	pytest --cov=steam
-
-pylint:
-	pylint -r n -f colorized steam || true
 
 build:
 	poetry build

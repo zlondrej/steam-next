@@ -22,7 +22,7 @@ dependencies = [
 [project.optional-dependencies]
 client = [
     "protobuf (>=6.33.2,<7.0)",
-    "gevent>=1.3.0",
+    "gevent>=25.9.1",
     "gevent-eventemitter (>=2.1,<3.0)",
 ]
 docs = [
@@ -36,7 +36,6 @@ dev = [
     "vcrpy (>=7.0.0,<9.0)",
     "mock (>=5.2.0, <6.0)",
     "pytest-cov (>=7.0.0,<8.0)",
-    "pylint (>=3.3.9,<4.0)",
     "protobuf (>=6.33.2,<7.0)",
     "vermin (>=1.8.0,<2.0)",
 ]
