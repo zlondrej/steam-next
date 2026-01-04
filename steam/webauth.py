@@ -33,23 +33,14 @@ Example usage:
     # Or the login steps be implemented for other situation like so
     try:
         user.login('password')
-    except (wa.CaptchaRequired, wa.LoginIncorrect) as exp:
-        if isinstance(exp, LoginIncorrect):
-            # ask for new password
-        else:
-            password = self.password
+    except (wa.LoginIncorrect) as exp:
+        # ask for new password
 
-        if isinstance(exp, wa.CaptchaRequired):
-            print user.captcha_url
-            # ask a human to solve captcha
-        else:
-            captcha = None
+        user.login(password=password)
+    except wa.TwoFactorAuthNotProvided:
+        # ask for auth code
 
-        user.login(password=password, captcha=captcha)
-    except wa.EmailCodeRequired:
-        user.login(email_code='ZXC123')
-    except wa.TwoFactorCodeRequired:
-        user.login(twofactor_code='ZXC123')
+        user.login(auth_code=auth_code)
 
     user.session.get('https://store.steampowered.com/account/history/')
 
@@ -369,43 +360,44 @@ class WebAuth:
         return response.status_code == 200
 
     def cli_login(self, username: str = '', password: str = '', code: str = None) -> requests.Session:
-        """Generates CLI prompts to perform the entire login process
+        """Generates CLI prompts to perform the entire login process"""
 
-        If you use email confirm, provide email_required = True,
-        else just provide code.
-        """
         while True:
             try:
                 return self.login(username, password, code)
             except LoginIncorrect:
-                prompt = ('Enter password for %s: ' if not password else 'Invalid password for %s. Enter password:')
-                password = getpass(prompt % repr(self.username))
-                continue
+                prompt = (
+                    f'Enter password for {self.username}: ' if not password
+                    else f'Invalid password for {self.username}. Enter password:'
+                )
+                password = getpass(prompt)
             except TwoFactorAuthNotProvided:
                 # 2FA handling
-                allowed = set(self.allowed_confirmations)
-                if allowed.isdisjoint(SUPPORTED_AUTH_TYPES):
+                supported_auth_types = set(self.allowed_confirmations)
+                if supported_auth_types.isdisjoint(SUPPORTED_AUTH_TYPES):
                     raise AuthTypeNotSupported("Couldn't find a supported auth type for this account.")
 
-                can_confirm_with_app = EAuthSessionGuardType.DeviceConfirmation in allowed
+                can_confirm_with_app = EAuthSessionGuardType.DeviceConfirmation in supported_auth_types
+                using_email_code = EAuthSessionGuardType.EmailCode in supported_auth_types
 
-                twofactor_code = ''
-                while twofactor_code.strip() == '':
+                code = ''
+                while code.strip() == '':
                     prompt = ''
-                    if EAuthSessionGuardType.DeviceCode in allowed:
+                    if EAuthSessionGuardType.DeviceCode in supported_auth_types:
                         prompt = 'Enter your Steam Guard code'
-                    elif EAuthSessionGuardType.EmailCode in allowed:
+                    elif EAuthSessionGuardType.EmailCode in supported_auth_types:
                         prompt = 'Enter the Steam 2FA code emailed to you'
+
                     if can_confirm_with_app:
                         if prompt == '':
-                            # don't think this is possible, but let's handle it anyways
+                            # don't think this is possible, but let's handle it anyway
                             input('Please confirm Steam Guard on your device and press ENTER to continue')
                         else:
-                            prompt += ' (or simply press Enter if approved via app)'
+                            prompt += ' (or simply press ENTER if approved via app)'
 
                     if prompt != '':
                         prompt += ': '
-                        twofactor_code = input(prompt)
+                        code = input(prompt)
 
                     if can_confirm_with_app:
                         try:
@@ -415,19 +407,20 @@ class WebAuth:
                             # they've not authenticated via the app, let's see if we can use their provided code
                             pass
 
-                    if twofactor_code.strip():
-                        using_email_code = EAuthSessionGuardType.EmailCode in allowed
-                        self._update_login_token(twofactor_code,
-                                                 EAuthSessionGuardType.EmailCode if using_email_code else EAuthSessionGuardType.DeviceCode)
+                    if code.strip():
+                        guard_type = EAuthSessionGuardType.EmailCode if using_email_code else EAuthSessionGuardType.DeviceCode
+                        self._update_login_token(code, guard_type)
+
                         try:
                             self._poll_login_status()
                             break
                         except TwoFactorAuthNotProvided:
                             print('Invalid auth code. Please try again')
-                            twofactor_code = ''
+                            code = ''
                             continue
                     else:
                         print('Unauthenticated. Please try again')
+
                 self._finalize_login()
 
                 return self.session
@@ -438,15 +431,13 @@ class MobileWebAuth(WebAuth):
     """Identical to :class:`WebAuth`, except it authenticates as a mobile device."""
     oauth_token = None  #: holds oauth_token after successful login
 
-    def _send_login(self, password='', captcha='', email_code='',
-                    twofactor_code=''):
+    def _send_login(self, password='', captcha='', email_code='', code=''):
         data = {
             'username': self.username,
-            "password": b64encode(
-                pkcs1v15_encrypt(self.key, password.encode('ascii'))),
+            "password": b64encode(pkcs1v15_encrypt(self.password, password.encode('ascii'))),
             "emailauth": email_code,
             "emailsteamid": str(self.steam_id) if email_code else '',
-            "twofactorcode": twofactor_code,
+            "twofactorcode": code,
             "captchagid": self.captcha_gid,
             "captcha_text": captcha,
             "loginfriendlyname": "python-steam webauth",
@@ -528,17 +519,11 @@ class MobileWebAuth(WebAuth):
         for domain in ['store.steampowered.com', 'help.steampowered.com',
                        'steamcommunity.com']:
             self.session.cookies.set('birthtime', '-3333', domain=domain)
-            self.session.cookies.set('sessionid', self.session_id,
-                                     domain=domain)
-            self.session.cookies.set('mobileClientVersion', '0 (2.1.3)',
-                                     domain=domain)
+            self.session.cookies.set('sessionid', self.session_id, domain=domain)
+            self.session.cookies.set('mobileClientVersion', '0 (2.1.3)', domain=domain)
             self.session.cookies.set('mobileClient', 'android', domain=domain)
-            self.session.cookies.set('steamLogin',
-                                     str(steam_id) + "%7C%7C" + resp_data[
-                                         'token'], domain=domain)
-            self.session.cookies.set('steamLoginSecure',
-                                     str(steam_id) + "%7C%7C" + resp_data[
-                                         'token_secure'],
+            self.session.cookies.set('steamLogin', str(steam_id) + "%7C%7C" + resp_data['token'], domain=domain)
+            self.session.cookies.set('steamLoginSecure', str(steam_id) + "%7C%7C" + resp_data['token_secure'],
                                      domain=domain, secure=True)
             self.session.cookies.set('Steam_Language', language, domain=domain)
 
@@ -564,24 +549,4 @@ class HTTPError(WebAuthException):
 
 
 class LoginIncorrect(WebAuthException):
-    pass
-
-
-class CaptchaRequired(WebAuthException):
-    pass
-
-
-class CaptchaRequiredLoginIncorrect(CaptchaRequired, LoginIncorrect):
-    pass
-
-
-class EmailCodeRequired(WebAuthException):
-    pass
-
-
-class TwoFactorCodeRequired(WebAuthException):
-    pass
-
-
-class TooManyLoginFailures(WebAuthException):
     pass
