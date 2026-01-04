@@ -50,3 +50,7 @@ pip install -U "steam-next[client]"
 # without (only when using parts that do not rely on gevent and protobuf)
 pip install -U steam-next
 ```
+
+> [!IMPORTANT]
+> This project is an independent work and is not affiliated with, endorsed by, or associated with Steam or Valve
+> Corporation.
