@@ -319,21 +319,26 @@ class WebAuth:
         if self.logged_on:
             return self.session
 
-        username = username or self.username
-        password = password or self.password
+        self.username = username or self.username
+        self.password = password or self.password
 
-        if username == '' or password == '':
+        if not self.username or not self.password:
             raise LoginIncorrect('Username or password is missing!')
-        else:
-            self.username = username
-            self.password = password
 
-        self._start_login_session()
+        if self.client_id is None:
+            self._start_login_session()
 
         if code:
             self._update_login_token(code)
 
-        self._poll_login_status()
+        try:
+            self._poll_login_status()
+        except TwoFactorAuthNotProvided:
+            if code:
+                # Code was rejected: drop the session so the next call starts a fresh one
+                self.client_id = None
+            raise
+
         self._finalize_login()
 
         return self.session
