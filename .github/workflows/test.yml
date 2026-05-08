@@ -1,4 +1,4 @@
-name: Run tests and upload results
+name: Run tests
 
 on:
   push:
@@ -70,14 +70,5 @@ jobs:
           pipx install poetry==${{ env.POETRY_VERSION }}
           poetry install --extras client --with dev --no-interaction --no-ansi
 
-      - name: Run Tests (generate JUnit XML)
-        run: |
-          python -c "import os; os.makedirs('reports', exist_ok=True)"
-          poetry run pytest -p no:cov --junitxml=reports/junit.xml
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v7
-        if: ${{ !cancelled() }}
-        with:
-          name: test-results-${{ matrix.os }}-py${{ matrix.python-version }}
-          path: reports/junit.xml
+      - name: Run Tests
+        run: poetry run pytest -p no:cov
